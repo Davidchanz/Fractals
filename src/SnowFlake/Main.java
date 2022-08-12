@@ -56,9 +56,9 @@ public class Main {
             Scene.objects.get(0).setAngZ(Scene.objects.get(0).getAngZ() + 1);
             scene.repaint();
         });
-        scene.add(TriangleFractal(new Vector2(-200,0), new Vector2(200,0), new Vector2(0,200)));// Generate Fractal Triangles
+        //scene.add(TriangleFractal(new Vector2(-200,0), new Vector2(200,0), new Vector2(0,200)));// Generate Fractal Triangles
         scene.add(LeafFractal()); // Generate Fractal Leaf
-        //scene.repaint();
+        scene.repaint();
         //t.start();
     }
 
@@ -203,7 +203,7 @@ public class Main {
         Vector2 d1 = new Vector2(rand.nextInt(WIDTH), rand.nextInt(HEIGHT));
         Vector2 d2 = P0;
         Scene.fromSceneCoord(d1);
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 40000; i++){
             switch (rand.nextInt(6)+1){
                 case 1, 2 ->{
                     d2 = P0;
@@ -232,11 +232,11 @@ public class Main {
      * */
     public static ShapesObject LeafFractal(){
         ShapesObject object = new ShapesObject("Serpinskii Triangle", 1);
-        /*Random rand = new Random();
+        Random rand = new Random();
         Vector2 d = new Vector2(0,0);
         Scene.fromSceneCoord(d);
-        int size = 0;*/
-        synchronized (object) {//TODO realize multitreading
+        int size = 0;
+        /*synchronized (object) {//TODO realize multitreading
         var t1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -245,7 +245,7 @@ public class Main {
                 Scene.fromSceneCoord(d);
                 int size = 0;
                 for(int i = 0; i < 10000; i++){
-                    /*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*/
+                    *//*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*//*
                     var r = rand.nextDouble();
                     if(r < 0.01){//f1
                         d = new Vector2(0,(0.16f*d.y)+size);
@@ -276,7 +276,7 @@ public class Main {
                     Scene.fromSceneCoord(d);
                     int size = 0;
                     for (int i = 10000; i < 20000; i++) {
-                        /*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*/
+                        *//*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*//*
                         var r = rand.nextDouble();
                         if (r < 0.01) {//f1
                             d = new Vector2(0, (0.16f * d.y) + size);
@@ -306,7 +306,7 @@ public class Main {
                     Scene.fromSceneCoord(d);
                     int size = 0;
                     for (int i = 20000; i < 30000; i++) {
-                        /*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*/
+                        *//*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*//*
                         var r = rand.nextDouble();
                         if (r < 0.01) {//f1
                             d = new Vector2(0, (0.16f * d.y) + size);
@@ -336,7 +336,7 @@ public class Main {
                     Scene.fromSceneCoord(d);
                     int size = 0;
                     for (int i = 30000; i < 40000; i++) {
-                        /*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*/
+                        *//*this.center = new Vector2((this.start.x + this.end.x)/2,(this.start.y + this.end.y)/2);*//*
                         var r = rand.nextDouble();
                         if (r < 0.01) {//f1
                             d = new Vector2(0, (0.16f * d.y) + size);
@@ -362,9 +362,9 @@ public class Main {
                 t2.start();
                 t3.start();
                 t4.start();
-        }
+        }*/
 
-        /*for(int i = 0; i < 40000; i++){
+        for(int i = 0; i < 40000; i++){
             var r = rand.nextDouble();
                 if(r < 0.01){//f1
                     d = new Vector2(0,(0.16f*d.y)+size);
@@ -376,8 +376,7 @@ public class Main {
                     d = new Vector2((-0.15f*d.x+0.28f*d.y)+size,(0.26f*d.x+0.24f*d.y+0.44f)+size);
                 }
             object.add(new Dot(new Vector2(d.x*65, d.y*37-252), 2, Color.GREEN));
-            }*/
-        //object.add(new Dot(new Vector2(100,100), Color.BLUE));
+            }
 
         return object;
     }
