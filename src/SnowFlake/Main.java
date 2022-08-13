@@ -3,14 +3,12 @@ package SnowFlake;
 import Engine2D.*;
 import Engine2D.Rectangle;
 import UnityMath.Vector2;
-import UnityMath.Vector3;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Main {
     public static final int WIDTH = 1000;
@@ -57,7 +55,7 @@ public class Main {
             scene.repaint();
         });
         scene.add(TriangleFractal(new Vector2(-200,0), new Vector2(200,0), new Vector2(0,200)));// Generate Fractal Triangles
-        //scene.add(LeafFractal()); // Generate Fractal Leaf
+        scene.add(LeafFractal()); // Generate Fractal Leaf
         scene.repaint();
         t.start();
     }
@@ -199,24 +197,17 @@ public class Main {
      * */
     public static ShapesObject TriangleFractal(Vector2 P0, Vector2 P1, Vector2 P2){
         ShapesObject object = new ShapesObject("Serpinskii Triangle", 1);
-        Random rand = new Random();
-        Vector2 d1 = new Vector2(rand.nextInt(WIDTH), rand.nextInt(HEIGHT));
-        Vector2 d2 = P0;
-        Scene.fromSceneCoord(d1);
-        for(int i = 0; i < 40000; i++){
-            switch (rand.nextInt(6)+1){
-                case 1, 2 ->{
-                    d2 = P0;
-                }
-                case 3, 4 ->{
-                    d2 = P1;
-                }
-                case 5, 6 ->{
-                    d2 = P2;
-                }
-            }
-            d1 = new Vector2((d1.x + d2.x)/2,(d1.y + d2.y)/2);
-            object.add(new Dot(new Vector2(d1), 2, Color.BLUE));
+
+        TriangleFractalThread t1 = new TriangleFractalThread(P0, P1, P2, 0, 20000, object);
+        TriangleFractalThread t2 = new TriangleFractalThread(P0, P1, P2, 20000, 40000, object);
+
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         return object;
     }
@@ -232,145 +223,18 @@ public class Main {
      * */
     public static ShapesObject LeafFractal(){
         ShapesObject object = new ShapesObject("Serpinskii Triangle", 1);
-        var t1 = new Thread(new Runnable() {
-            @Override
-            synchronized public void run() {
-                synchronized (object) {
-                    Random rand = new Random();
-                    Vector2 d = new Vector2(0, 0);
-                    Scene.fromSceneCoord(d);
-                    int size = 0;
-                    for (int i = 0; i < 10000; i++) {
-                        var r = rand.nextDouble();
-                        if (r < 0.01) {//f1
-                            d = new Vector2(0, (0.16f * d.y) + size);
-                        } else if (r < 0.86) {//f2
-                            d = new Vector2((0.85f * d.x + 0.04f * d.y) + size, (-0.04f * d.x + 0.85f * d.y + 1.6f) + size);
-                        } else if (r < 0.93) {//f3
-                            d = new Vector2((0.2f * d.x - 0.26f * d.y) + size, (0.23f * d.x + 0.22f * d.y + 1.6f) + size);
-                        } else { //f4
-                            d = new Vector2((-0.15f * d.x + 0.28f * d.y) + size, (0.26f * d.x + 0.24f * d.y + 0.44f) + size);
-                        }
 
-                        object.add(new Dot(new Vector2(d.x * 65, d.y * 37 - 252), 2, Color.GREEN));
-                        //object.notifyAll();
-                    }
-                }
-            }
-        });
+        LeafFractalThread t1 = new LeafFractalThread(0, 20000, object);
+        LeafFractalThread t2 = new LeafFractalThread(20000, 40000, object);
 
-
-            var t2 = new Thread(new Runnable() {
-                @Override
-                synchronized public void run() {
-                    synchronized (object) {
-                        Random rand = new Random();
-                        Vector2 d = new Vector2(0, 0);
-                        Scene.fromSceneCoord(d);
-                        int size = 0;
-                        for (int i = 10000; i < 20000; i++) {
-                            var r = rand.nextDouble();
-                            if (r < 0.01) {//f1
-                                d = new Vector2(0, (0.16f * d.y) + size);
-                            } else if (r < 0.86) {//f2
-                                d = new Vector2((0.85f * d.x + 0.04f * d.y) + size, (-0.04f * d.x + 0.85f * d.y + 1.6f) + size);
-                            } else if (r < 0.93) {//f3
-                                d = new Vector2((0.2f * d.x - 0.26f * d.y) + size, (0.23f * d.x + 0.22f * d.y + 1.6f) + size);
-                            } else { //f4
-                                d = new Vector2((-0.15f * d.x + 0.28f * d.y) + size, (0.26f * d.x + 0.24f * d.y + 0.44f) + size);
-                            }
-                            /*try {
-                                object.wait();
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }*/
-                            object.add(new Dot(new Vector2(d.x * 65, d.y * 37 - 252), 2, Color.GREEN));
-                            //object.notifyAll();
-                        }
-                    }
-                }
-            });
-
-            var t3 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (object) {
-                        Random rand = new Random();
-                        Vector2 d = new Vector2(0, 0);
-                        Scene.fromSceneCoord(d);
-                        int size = 0;
-                        for (int i = 20000; i < 30000; i++) {
-                            var r = rand.nextDouble();
-                            if (r < 0.01) {//f1
-                                d = new Vector2(0, (0.16f * d.y) + size);
-                            } else if (r < 0.86) {//f2
-                                d = new Vector2((0.85f * d.x + 0.04f * d.y) + size, (-0.04f * d.x + 0.85f * d.y + 1.6f) + size);
-                            } else if (r < 0.93) {//f3
-                                d = new Vector2((0.2f * d.x - 0.26f * d.y) + size, (0.23f * d.x + 0.22f * d.y + 1.6f) + size);
-                            } else { //f4
-                                d = new Vector2((-0.15f * d.x + 0.28f * d.y) + size, (0.26f * d.x + 0.24f * d.y + 0.44f) + size);
-                            }
-                            object.add(new Dot(new Vector2(d.x * 65, d.y * 37 - 252), 2, Color.GREEN));
-                        }
-                    }
-                }
-            });
-
-            var t4 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (object) {
-                        Random rand = new Random();
-                        Vector2 d = new Vector2(0, 0);
-                        Scene.fromSceneCoord(d);
-                        int size = 0;
-                        for (int i = 30000; i < 40000; i++) {
-                            var r = rand.nextDouble();
-                            if (r < 0.01) {//f1
-                                d = new Vector2(0, (0.16f * d.y) + size);
-                            } else if (r < 0.86) {//f2
-                                d = new Vector2((0.85f * d.x + 0.04f * d.y) + size, (-0.04f * d.x + 0.85f * d.y + 1.6f) + size);
-                            } else if (r < 0.93) {//f3
-                                d = new Vector2((0.2f * d.x - 0.26f * d.y) + size, (0.23f * d.x + 0.22f * d.y + 1.6f) + size);
-                            } else { //f4
-                                d = new Vector2((-0.15f * d.x + 0.28f * d.y) + size, (0.26f * d.x + 0.24f * d.y + 0.44f) + size);
-                            }
-                            object.add(new Dot(new Vector2(d.x * 65, d.y * 37 - 252), 2, Color.GREEN));
-                        }
-                    }
-                }
-            });
-
-                t1.start();
-                t2.start();
-                t3.start();
-                t4.start();
-            try {
-                t1.join();
-                t2.join();
-                t3.join();
-                t4.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-                //t3.start();
-                //t4.start();
-
-        /*for(int i = 0; i < 40000; i++){
-            var r = rand.nextDouble();
-                if(r < 0.01){//f1
-                    d = new Vector2(0,(0.16f*d.y)+size);
-                }else if(r<0.86){//f2
-                    d = new Vector2((0.85f*d.x + 0.04f*d.y)+size,(-0.04f*d.x+0.85f*d.y+1.6f)+size);
-                }else if(r <0.93){//f3
-                    d = new Vector2((0.2f*d.x-0.26f*d.y)+size,(0.23f*d.x+0.22f*d.y+1.6f)+size);
-                }else{ //f4
-                    d = new Vector2((-0.15f*d.x+0.28f*d.y)+size,(0.26f*d.x+0.24f*d.y+0.44f)+size);
-                }
-            object.add(new Dot(new Vector2(d.x*65, d.y*37-252), 2, Color.GREEN));
-            }*/
-
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return object;
     }
-
 }
