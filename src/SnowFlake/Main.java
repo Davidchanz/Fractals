@@ -19,8 +19,8 @@ public class Main {
         System.out.println("Hello world!");
 
         scene = new Scene(WIDTH, HEIGHT);
-        ShapesObject s = SnowFlakeGenerator(1, 200, Color.MAGENTA);/*Generate Fractal SnowFlake*/
-        scene.add(s);
+        final ShapesObject[] SnowFlake = {SnowFlakeGenerator(3, 200, Color.MAGENTA)};/*Generate Fractal SnowFlake*/
+        scene.add(SnowFlake[0]);
 
         JFrame frame = new JFrame("2DTest");
         frame.setSize(new Dimension(WIDTH + 100, HEIGHT + 100));
@@ -39,10 +39,9 @@ public class Main {
             public void actionPerformed(ActionEvent actionEvent) {
 
                 /*Change num of Fractal vertices*/
-                Scene.objects.clear();
-                scene.add(SnowFlakeGenerator(d[0], 200, Color.MAGENTA));
-                System.out.println(d[0]);
                 d[0]++;
+                SnowFlake[0] = SnowFlakeGenerator(d[0], 200, Color.MAGENTA);
+                System.out.println(d[0]);
                 frame.requestFocus();
             }
         });
